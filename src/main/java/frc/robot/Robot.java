@@ -2,9 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot;
 
+
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -17,7 +22,14 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+    XboxController driverController = new XboxController(0);
+   TalonFX motor1 = new TalonFX(0);
+
+    boolean isCute = true;
+        boolean hasBigeyes = true;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -27,6 +39,12 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    SmartDashboard.putString("A Variable", kCustomAuto);
+   
+                SmartDashboard.putBoolean("Chiikawa", isCute && hasBigeyes);
+
+              
+
   }
 
   /**
@@ -37,7 +55,14 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+        SmartDashboard.putNumber("ControllerX", driverController.getLeftX());
+
+
+        motor1.setControl(new VoltageOut(driverController.getLeftX() * 12));
+         SmartDashboard.putNumber("DutyCycleMotorApplied", motor1.getDutyCycle().getValueAsDouble());
+        SmartDashboard.putNumber("VoltageMotorApplied", motor1.getMotorVoltage().getValueAsDouble());
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
